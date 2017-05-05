@@ -1,12 +1,13 @@
 package org.stormhub.bostadskollen.driver;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
-import org.jsoup.Jsoup;
 import org.stormhub.bostadskollen.data.Apartment;
 import org.stormhub.bostadskollen.data.Subscription;
 import org.stormhub.bostadskollen.db.Db4oWrapper;
@@ -34,7 +35,7 @@ import freemarker.template.TemplateException;
  * @author Realiserad
  */
 public class Bostadskollen {
-	public final static String feed = "https://bostad.stockholm.se/Lista/";
+	public final static String feed = "https://bostad.stockholm.se/Lista/AllaAnnonser";
 	
 	public static void main(String args[]) {
 		try {
@@ -45,7 +46,7 @@ public class Bostadskollen {
 					new MailService(), 
 					arguments.isDryRun() ? new DummySubscriptionDAO() : new MongoSubscriptionDAO(), 
 					new Db4oWrapper(arguments.getDatabasePath()), 
-					new ApartmentQueue(Jsoup.connect(feed)));
+					new ApartmentQueue((HttpURLConnection) new URL(feed).openConnection()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
